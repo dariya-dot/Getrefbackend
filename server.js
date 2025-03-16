@@ -32,13 +32,6 @@ app.use('/hr',hrRouter)
 app.use('/hrjob',hrJobRouter)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'build')));
-if (process.env.AWS_LAMBDA_FUNCTION_NAME) {
-    const serverlessExpress = require('aws-serverless-express');
-    const server = serverlessExpress.createServer(app);
-    exports.handler = (event, context) => serverlessExpress.proxy(server, event, context);
-} else {
-    app.listen(port, () => {
-        console.log(`Server is running at http://localhost:${port}`);
-    });
-}
-module.exports = app; 
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+});
