@@ -12,7 +12,6 @@
   "dependencies": {
     "@aws-sdk/client-ses": "^3.758.0",
     "aws-sdk": "^2.1692.0",
-   
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "body-parser": "^1.20.3",
@@ -26,5 +25,8 @@
     "nodemon": "^3.1.9"
   },
   "keywords": [],
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "sitemap": "^8.0.0"
+  }
 }
