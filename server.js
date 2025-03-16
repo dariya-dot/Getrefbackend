@@ -9,7 +9,7 @@ const hrJobRouter=require('./routers/hrJobrouter')
 const cors=require('cors')
 const path=require('path')
 const app=express()
-const port = process.env.PORT || 4001;
+const port =  4001;
 dotenv.config()
 app.use(express.json());
 app.use(cors())
@@ -22,8 +22,6 @@ mongoose.connect(mongoURI)
 app.get('/', (req, res) => {
     res.send(`Server running at port ${port}`);
 });
-
-
 
 app.use('/user',userrouter)
 app.use('/referer',referRouter)
