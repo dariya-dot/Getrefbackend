@@ -41,3 +41,4 @@ if (process.env.AWS_LAMBDA_FUNCTION_NAME) {
         console.log(`Server is running at http://localhost:${port}`);
     });
 }
+module.exports = app; 
