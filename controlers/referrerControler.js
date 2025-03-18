@@ -2,10 +2,11 @@ const ReferralModel = require("../models/refer/ReferelModel");
 const ReferalJobModel=require('../models/refer/ReferalJobModel')
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
-const { sendOTPToReferrer } = require("../emails/email");
+const { sendOTPToRef,refResetLink } = require("../emails/email");
 const path = require("path");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
+const crypto = require('crypto')
 
 const generateToken = (refId) => {
   return jwt.sign({ id: refId }, process.env.KEY, { expiresIn: "1d" });
@@ -30,7 +31,7 @@ const refRegistration = async (req, res) => {
       });
       await ref.save();
       referId = ref._id;
-      //  sendOTPToReferrer(ref)
+      sendOTPToRef(ref)
       console.log("registration sucess", ref);
       res.status(201).json({
         message: "Referer resister sussfully",
@@ -72,12 +73,12 @@ const otpVerfication = async (req, res) => {
 };
 
 const resetNewPassword = async (req, res) => {
-  const { token } = req.body;
+  const { resetToken } = req.body;
   const { password } = req.body;
-  console.log(token, password);
+  console.log(resetToken, password);
   try {
     const ref = await ReferralModel.findOne({
-      resetPasswordToken: token,
+      resetPasswordToken: resetToken.resetToken,
     });
     if (!ref) {
       return res.status(400).json({ message: "user not found" });
@@ -111,13 +112,13 @@ const forgetPassword = async (req, res) => {
       const resetToken = crypto.randomBytes(20).toString("hex");
       const resetTokenExpiresAt = Date.now() + 1 * 30 * 60 * 1000; // 30 minutes
 
-      user.resetPasswordToken = resetToken;
-      user.resetPasswordExpiresAt = resetTokenExpiresAt;
-
+      ref.resetPasswordToken = resetToken;
+      ref.resetPasswordExpiresAt = resetTokenExpiresAt;
+      const   resetLink=`http://localhost:5173/refforgetpassword/${resetToken}` 
       await ref.save();
-      resetEmailSendfunction(
+      refResetLink(
         ref,
-        `${process.env.USR_URL}new-password/${resetToken}`
+        resetLink
       );
 
       return res
@@ -140,15 +141,15 @@ const loginrefer = async (req, res) => {
         .status(401)
         .json({ message: "Email and password are incorrect" });
     }
-    // else if (ref && !ref.isVerified) {
-    //   await ref.deleteOne({ email });
-    //   return res
-    //     .status(403)
-    //     .json({
-    //       message:
-    //         "Your account was not verified and has been removed. Please register again.",
-    //     });
-    // }
+    else if (ref && !ref.isVerified) {
+      await ref.deleteOne({ email });
+      return res
+        .status(403)
+        .json({
+          message:
+            "Your account was not verified and has been removed. Please register again.",
+        });
+    }
     else {
       const refId = ref._id;
       const token = generateToken(refId);
@@ -211,9 +212,12 @@ const updateReferDetails = async (req, res) => {
     const { phone, company, jobTitle, jobLocation } = req.body; 
     const photo = req.file ? req.file.filename : undefined;
     const findref = await ReferralModel.findById( refId );
+   
+
     if (!findref) {
       return res.status(404).json({ message: "refer not found" });
-    } else {
+    }
+   
       const updatedref = await ReferralModel.findByIdAndUpdate(
         refId,
         {
@@ -229,7 +233,7 @@ const updateReferDetails = async (req, res) => {
       res
         .status(200)
         .json({ message: "refer details updated successfully", updatedref });
-    }
+    
   } catch (error) {
     console.error("Error updating referr details:", error);
     res.status(500).json({ message: "Internal server error" });

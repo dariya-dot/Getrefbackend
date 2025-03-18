@@ -8,7 +8,7 @@ const referrerSchema = new mongoose.Schema({
   resetPasswordToken: {type:String, default:""},
   resetPasswordExpiresAt:{type:Date ,default:""},
   photo:{type: String, default:""},
-  phone: { type: String,unique: true ,default:""},
+  phone: { type: String,default:"" },
   company: { type: String, default:""},
   jobTitle: { type: String, default:"" },
   jobLocation:{type: String,default:""},

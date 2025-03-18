@@ -2,7 +2,7 @@ const UserModel = require("../models/user/UserModel");
 const ReferelJobModel= require("../models/refer/ReferalJobModel")
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
-const { sendOTP } = require("../emails/email");
+const { sendOTPToUser,useResetLink } = require("../emails/email");
 const crypto = require("crypto");
 const multer = require("multer");
 const path = require("path");
@@ -30,7 +30,7 @@ const resistration = async (req, res) => {
       });
       await newUser.save();
       const userId = newUser._id;
-      // sendOTP(newUser);
+      sendOTPToUser(newUser);
       console.log("registration sucess", newUser);
       return res.status(201).json({
         message: "user resister sussfully",
@@ -73,15 +73,17 @@ const otpVerfication = async (req, res) => {
 };
 
 const resetNewPassword = async (req, res) => {
-  const { token } = req.body;
+  const { resetToken } = req.body;
   const { password } = req.body;
-  console.log(token, password);
+  console.log(resetToken.resetToken, password);
   try {
     const user = await UserModel.findOne({
-      resetPasswordToken: token,
+      resetPasswordToken: resetToken.resetToken,
     });
     if (!user) {
+      console.log("user not found")
       return res.status(400).json({ message: "user not found" });
+
     } else {
       const hashedPassword = await bcrypt.hash(password, 10);
       user.password = hashedPassword;
@@ -89,7 +91,9 @@ const resetNewPassword = async (req, res) => {
       user.resetTokenExpiresAt = "";
 
       await user.save();
+      console.log(user)
       return res.status(201).json({ message: "password updated", user });
+      
     }
   } catch (error) {
     console.error(error);
@@ -114,11 +118,11 @@ const forgetPassword = async (req, res) => {
 
       user.resetPasswordToken = resetToken;
       user.resetPasswordExpiresAt = resetTokenExpiresAt;
-
+      const   resetLink=`http://localhost:5173/forgetpassword/${resetToken}` 
       await user.save();
-      resetEmailSendfunction(
+      useResetLink(
         user,
-        `${process.env.USR_URL}new-password/${resetToken}`
+        resetLink
       );
 
       return res
@@ -144,15 +148,15 @@ const loginUser = async (req, res) => {
         .json({ message: "Email and password are incorrect" });
         
     }
-    //  else if (user && !user.isVerified) {
-    //   await user.deleteOne({ email });
-    //   return res
-    //     .status(403)
-    //     .json({
-    //       message:
-    //         "Your account was not verified and has been removed. Please register again.",
-    //     });
-    // } 
+     else if (user && !user.isVerified) {
+      await user.deleteOne({ email });
+      return res
+        .status(403)
+        .json({
+          message:
+            "Your account was not verified and has been removed. Please register again.",
+        });
+    } 
     else {
       const token = generateToken(user._id);
       const userId = user._id;
@@ -234,9 +238,9 @@ const updateUserDetails = async (req, res) => {
         skills  ,
         address ,
         experience ,
-        State ,
+        state ,
         git ,
-        linkedIn 
+        linkedIn ,city
       } = req.body;
       const photo = req.files?.photo
       ? req.files.photo[0].path.replace(/^uploads[\\/]/, "")
@@ -262,9 +266,10 @@ const updateUserDetails = async (req, res) => {
               profession:profession || existingUser.profession,
               company:company||existingUser.company,
               phone:phone||existingUser.phone,
-              State:State||existingUser.State,
+              State:state||existingUser.State,
               git:git||existingUser.git,
               linkedIn:linkedIn||existingUser.linkedIn,
+              City:city||existingUser.City,
               
   
               ...(photo ? { photo } : {}) ,

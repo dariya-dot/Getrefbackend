@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     profession: { type: String, default:"" },
     company: { type: String, default:"" },
-    phone: { type: Number, default:0o0},
+    phone: { type:String, default:""},
     otp:{type:String}, 
     isVerified: { type: Boolean, default: false },
     resetPasswordToken: {type:String, default:""},
