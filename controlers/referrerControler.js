@@ -114,7 +114,7 @@ const forgetPassword = async (req, res) => {
 
       ref.resetPasswordToken = resetToken;
       ref.resetPasswordExpiresAt = resetTokenExpiresAt;
-      const   resetLink=`http://localhost:5173/refforgetpassword/${resetToken}` 
+      const   resetLink=`https://www.getreference.site/refforgetpassword/${resetToken}` 
       await ref.save();
       refResetLink(
         ref,

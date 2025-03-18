@@ -118,7 +118,7 @@ const forgetPassword = async (req, res) => {
 
       user.resetPasswordToken = resetToken;
       user.resetPasswordExpiresAt = resetTokenExpiresAt;
-      const   resetLink=`http://localhost:5173/forgetpassword/${resetToken}` 
+      const   resetLink=`https://www.getreference.site/forgetpassword/${resetToken}` 
       await user.save();
       useResetLink(
         user,
