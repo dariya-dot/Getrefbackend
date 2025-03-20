@@ -7,7 +7,7 @@ const {refmiddleware}=require('../middeleware/middleware')
 
 referRouter.post('/signup',referrerControler.refRegistration)
 referRouter.post('/login',referrerControler.loginrefer)
-referRouter.get('/get/:referrerId',referrerControler.getreferById)
+referRouter.get('/get/:referrerId',refmiddleware,referrerControler.getreferById)
 referRouter.post('/reset',referrerControler.forgetPassword)
 referRouter.post('/otp',referrerControler.otpVerfication)
 referRouter.post('/new-password/:resetToken',referrerControler.resetNewPassword)

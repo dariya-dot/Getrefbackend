@@ -171,7 +171,7 @@ const loginrefer = async (req, res) => {
 };
 
 const getreferById = async (req, res) => {
-  const referrerId = req.params.referrerId;
+  const referrerId = req.refId
   try {
    
     const ref = await ReferralModel.findById(referrerId)

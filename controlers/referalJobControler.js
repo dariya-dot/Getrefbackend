@@ -169,7 +169,7 @@ const alljobdetails = async (req, res) => {
 
 const getJobsByReferrer = async (req, res) => {
   try {
-    const { referrerId } = req.params;
+    const  referrerId  = req.refId;
 
     console.log("backend ref id", referrerId);
     const referrer = await ReferralModel.findById(referrerId);

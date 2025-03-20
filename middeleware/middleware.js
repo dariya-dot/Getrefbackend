@@ -33,7 +33,7 @@ const middleware=async(req,res,next)=>{
 const refmiddleware= async (req,res,next)=>{
 
     const {token}=req.headers
-    console.log("token fron the middleware",token)
+    console.log("token from the middleware",token)
     if(!token){
         return res.status(400).json({message:"token not found in middleware"})
     }

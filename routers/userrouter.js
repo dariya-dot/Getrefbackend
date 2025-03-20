@@ -9,7 +9,7 @@ userrouter.post('/otp',userControler.otpVerfication)
 userrouter.post('/reset',userControler.forgetPassword)
 userrouter.post('/new-password/:resetToken',userControler.resetNewPassword)
 userrouter.post('/login',userControler.loginUser)
-userrouter.get('/get/:userId',userControler.getUserById)
+userrouter.get('/get/:userId',middleware,userControler.getUserById)
 userrouter.post('/apply-job',userControler.jobApplication)
 userrouter.post('/job_delete',userControler.cancelRequest)
 
