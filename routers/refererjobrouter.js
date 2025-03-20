@@ -7,7 +7,7 @@ const path=require('path')
 
 referJobRouter.post("/jobpost",refmiddleware,referrerJobControler.refrerJobPost)
 referJobRouter.put("/jobupdate/:refJobId",refmiddleware,referrerJobControler.refrerJobUpdate)
-referJobRouter.get("/job/:refJobId",refmiddleware,referrerJobControler.getRefjobdetails)
+referJobRouter.get("/job/:refJobId",referrerJobControler.getRefjobdetails)
 referJobRouter.get("/alljobs",referrerJobControler.alljobdetails)
 referJobRouter.get("/referrer/:referrerId",refmiddleware,referrerJobControler.getJobsByReferrer)
 referJobRouter.get("/job/application/:refJobId",refmiddleware,referrerJobControler.getJobApplications)
