@@ -1,5 +1,6 @@
 const UserModel = require("../models/user/UserModel");
 const ReferelJobModel= require("../models/refer/ReferalJobModel")
+const ReferralModel =require("../models/refer/ReferelModel")
 const bcrypt = require("bcryptjs");
 const validator = require("validator");
 const { sendOTPToUser,useResetLink } = require("../emails/email");
@@ -7,6 +8,8 @@ const crypto = require("crypto");
 const multer = require("multer");
 const path = require("path");
 const jwt = require("jsonwebtoken");
+const UserMessageModel = require("../models/user/UserMessageModel");
+const ReferelMessageModel = require("../models/refer/ReferelMessageModel");
 
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.KEY, { expiresIn: "1d" });
@@ -352,6 +355,49 @@ const cancelRequest = async (req, res) => {
   }
 };
 
+const report = async (req, res) => {
+  try {
+    const { email, message } = req.body;
+
+    // Find user first
+    const user = await UserModel.findOne({ email });
+
+    if (user) {
+      // If user exists, save message and return response
+      const usermsg = new UserMessageModel({
+        message,
+        userId: user._id,
+      });
+      await usermsg.save();
+      user.messages.push(usermsg._id);
+      await user.save();
+
+      return res.status(200).json({ message: "Complaint registered" });
+    }
+
+    // If user does not exist, check for ref
+    const ref = await ReferralModel.findOne({ email });
+
+    if (ref) {
+      const refmsg = new ReferelMessageModel({
+        message,
+        userId: ref._id,
+      });
+      await refmsg.save();
+      ref.messages.push(refmsg._id);
+      await ref.save();
+
+      return res.status(200).json({ message: "Complaint registered" });
+    }
+
+  
+    return res.status(400).json({ message: "User not registered" });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
 
 module.exports = {
   resistration,
@@ -360,5 +406,5 @@ module.exports = {
   resetNewPassword,
   loginUser,
   getUserById,
-  updateUserDetails,upload,jobApplication,cancelRequest
+  updateUserDetails,upload,jobApplication,cancelRequest,report
 };

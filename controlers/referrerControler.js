@@ -6,7 +6,8 @@ const { sendOTPToRef,refResetLink } = require("../emails/email");
 const path = require("path");
 const multer = require("multer");
 const jwt = require("jsonwebtoken");
-const crypto = require('crypto')
+const crypto = require('crypto');
+const ReferelMessageModel = require("../models/refer/ReferelMessageModel");
 
 const generateToken = (refId) => {
   return jwt.sign({ id: refId }, process.env.KEY, { expiresIn: "1d" });
@@ -239,7 +240,34 @@ const updateReferDetails = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+const report=async(req,res)=>{
+  try {
+    const {email,message}=req.body
+    const ref= await ReferralModel.findOne({email})
+    if(!ref){
+      console.log("no ref")
+      return res.status(400).json({message:"ref Not Registerd"})
+    }
+    else{
+      const refmsg= new ReferelMessageModel({
+        message,
+        userId:ref._id
+      })
+     
+      
+      await refmsg.save()
+      
 
+      ref.messages.push(refmsg._id)
+      await ref.save()
+      return res.status(200).json({message:"complaint registerd"})
+    }
+  } catch (error) {
+    console.error(error)
+      return res.status(400).json({message:"internal server error"})
+    
+  }
+}
 module.exports = {
   refRegistration,
   loginrefer,
@@ -248,5 +276,5 @@ module.exports = {
   resetNewPassword,
   otpVerfication,
   upload,
-  updateReferDetails,
+  updateReferDetails,report
 };

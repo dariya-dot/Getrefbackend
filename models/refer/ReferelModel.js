@@ -13,7 +13,10 @@ const referrerSchema = new mongoose.Schema({
   jobTitle: { type: String, default:"" },
   jobLocation:{type: String,default:""},
   referedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "ReferelJobModel" }],
-  jobseeker:[{type:mongoose.Schema.Types.ObjectId,ref:"UserModel"}]
+  jobseeker:[{type:mongoose.Schema.Types.ObjectId,ref:"UserModel"}],
+   messages: [
+        { type: mongoose.Schema.Types.ObjectId, ref: "ReferelMessageModel" }
+    ]
 }, { timestamps: true },({ minimize: false }));
 
 const ReferralModel=mongoose.model("ReferralModel",referrerSchema)

@@ -24,6 +24,9 @@ const userSchema = new mongoose.Schema({
     offerLetter_or_experienceCertificate: { type: String ,default: ""}, 
     createdAt: { type: Date, default: Date.now },
     appliedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "ReferelJobModel" }],
+    messages: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "UserMessageModel" }
+  ]
    
   },{ minimize: false });
   const UserModel=mongoose.model("UserModel",userSchema)

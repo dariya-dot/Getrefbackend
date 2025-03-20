@@ -12,6 +12,8 @@ userrouter.post('/login',userControler.loginUser)
 userrouter.get('/get/:userId',userControler.getUserById)
 userrouter.post('/apply-job',userControler.jobApplication)
 userrouter.post('/job_delete',userControler.cancelRequest)
+
 userrouter.put('/update',middleware,upload,userControler.updateUserDetails)
+userrouter.post('/report',userControler.report)
 
 module.exports=userrouter
