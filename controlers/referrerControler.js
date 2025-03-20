@@ -142,7 +142,7 @@ const loginrefer = async (req, res) => {
         .status(401)
         .json({ message: "Email and password are incorrect" });
     }
-    else if (ref && !ref.isVerified) {
+    else if ( !ref.isVerified) {
       await ref.deleteOne({ email });
       return res
         .status(403)
@@ -240,34 +240,7 @@ const updateReferDetails = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-const report=async(req,res)=>{
-  try {
-    const {email,message}=req.body
-    const ref= await ReferralModel.findOne({email})
-    if(!ref){
-      console.log("no ref")
-      return res.status(400).json({message:"ref Not Registerd"})
-    }
-    else{
-      const refmsg= new ReferelMessageModel({
-        message,
-        userId:ref._id
-      })
-     
-      
-      await refmsg.save()
-      
 
-      ref.messages.push(refmsg._id)
-      await ref.save()
-      return res.status(200).json({message:"complaint registerd"})
-    }
-  } catch (error) {
-    console.error(error)
-      return res.status(400).json({message:"internal server error"})
-    
-  }
-}
 module.exports = {
   refRegistration,
   loginrefer,
@@ -276,5 +249,5 @@ module.exports = {
   resetNewPassword,
   otpVerfication,
   upload,
-  updateReferDetails,report
+  updateReferDetails
 };

@@ -11,7 +11,7 @@ referRouter.get('/get/:referrerId',referrerControler.getreferById)
 referRouter.post('/reset',referrerControler.forgetPassword)
 referRouter.post('/otp',referrerControler.otpVerfication)
 referRouter.post('/new-password/:resetToken',referrerControler.resetNewPassword)
-referRouter.post('/report',referrerControler.report)
+
 referRouter.put('/update',refmiddleware,upload.single("photo"),referrerControler.updateReferDetails)
 
 referRouter.get('/uploads/:imageName', (req, res) => {   
