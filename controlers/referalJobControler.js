@@ -235,6 +235,7 @@ const deleteJob = async (req, res) => {
       { $pull: { referedJobs: refJobId } },
       { new: true }
     );
+    
     const job = await ReferelJobModel.findByIdAndDelete(refJobId);
     if (!job) {
       return res.status(400).json({ message: "Job not found" });
